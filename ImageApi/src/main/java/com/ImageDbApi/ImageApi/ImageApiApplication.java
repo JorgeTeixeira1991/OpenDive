@@ -1,13 +1,13 @@
-package com.open.dive.OpenDiveImageAPI;
+package com.ImageDbApi.ImageApi;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class OpenDiveImageApiApplication {
+public class ImageApiApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(OpenDiveImageApiApplication.class, args);
+		SpringApplication.run(ImageApiApplication.class, args);
 	}
 
 }

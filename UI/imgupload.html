@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Upload</title>
+</head>
+
+<body>
+    <input type="text" id="imageId" placeholder="Enter Image ID">
+    <button onclick="fetchImage()">Fetch Image</button>
+    <img id="displayImage" src="">
+
+    <br>
+
+
+    <form enctype="multipart/form-data" action="javascript:void(0);" id="uploadForm">
+        Image Name: <input type="text" name="description" id="desc"/>
+        <br/>
+        Image: <input type="file" id="fileInput" name="file" />
+        <br/>
+        <input type="submit" value="Upload" />
+    </form>
+
+    <button onclick="fetchImages()">Show Images</button>
+    <button onclick="unloadImages()">Hide Images</button>
+
+
+<div id="imageContainer"></div>
+
+    <script src="imgupload.js"></script>
+
+</body>
+</html>
