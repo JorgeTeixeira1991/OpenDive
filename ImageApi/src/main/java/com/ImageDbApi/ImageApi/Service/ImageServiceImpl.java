@@ -13,17 +13,16 @@ public class ImageServiceImpl implements ImageService {
     @Autowired
     private ImageRepository imageRepository;
 
-    @Override
     public Image saveImage(Image image) {
         return imageRepository.save(image);
     }
-
-    @Override
     public Image getImageById(Long id) {
         return imageRepository.findById(id).orElseThrow(RuntimeException::new);
     }
-
     public List<Image> getAllImages() {
         return imageRepository.findAll();
+    }
+    public boolean imgExists(Long id){
+        return getImageById(id) != null;
     }
 }

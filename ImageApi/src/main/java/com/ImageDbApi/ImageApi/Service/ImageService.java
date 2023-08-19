@@ -7,6 +7,7 @@ import java.util.List;
 public interface ImageService {
     Image saveImage(Image image);
     Image getImageById(Long id);
-    public List<Image> getAllImages() ;
+    List<Image> getAllImages() ;
+    boolean imgExists(Long id);
 
 }
