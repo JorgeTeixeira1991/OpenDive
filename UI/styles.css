@@ -26,17 +26,16 @@ font-size: 4rem;
     margin: 5%;
 }
 
-#cardSection{
+#cardSection {
     padding: 20px;
     width: 70vw;
     height: fit-content;
-    display: flex;
-    flex-direction: column;
+    width: 90%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);  /* Three equal columns */
+    gap: 10px;
     justify-items: center;
-    align-items: center;
-     /* Center the element horizontally */
+    align-items: start;
     margin: auto;
-    background-color:  rgba(228, 224, 224, 0.61);
-     
-
+    background-color: rgba(228, 224, 224, 0.61);
 }

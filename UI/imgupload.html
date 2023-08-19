@@ -4,13 +4,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles-img.css">
     <title>Image Upload</title>
 </head>
 
 <body>
+    <div id="container">
     <input type="text" id="imageId" placeholder="Enter Image ID">
+    <br>
+    <br>
     <button onclick="fetchImage()">Fetch Image</button>
-    <img id="displayImage" src="">
+    <div id="displayImage" style="display: block;"> </div>
 
     <br>
 
@@ -18,10 +22,16 @@
     <form enctype="multipart/form-data" action="javascript:void(0);" id="uploadForm">
         Image Name: <input type="text" name="description" id="desc"/>
         <br/>
-        Image: <input type="file" id="fileInput" name="file" />
+        <br>
+        <label for="fileInput">Choose a file</label>
+        <input type="file" id="fileInput" name="file" />
+        <br>
         <br/>
-        <input type="submit" value="Upload" />
+        <label for="upload"></label>
+        <input type="submit" value="Upload" id="upload"/>
     </form>
+
+    <br>
 
     <button onclick="fetchImages()">Show Images</button>
     <button onclick="unloadImages()">Hide Images</button>
@@ -30,6 +40,6 @@
 <div id="imageContainer"></div>
 
     <script src="imgupload.js"></script>
-
+</div>
 </body>
 </html>
