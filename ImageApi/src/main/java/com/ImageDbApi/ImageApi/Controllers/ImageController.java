@@ -1,7 +1,5 @@
-package com.ImageDbApi.ImageApi.Controllers;
+package com.ImageDbApi.ImageAp
 
-import com.ImageDbApi.ImageApi.Models.Image;
-import com.ImageDbApi.ImageApi.Service.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -16,8 +14,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/image")
-public class ImageController {
-
     @Autowired
     private ImageService imageService;
 
@@ -52,12 +48,10 @@ public class ImageController {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.TEXT_PLAIN);
 
+    
+
         return new ResponseEntity<>(base64Image, headers, HttpStatus.OK);
     }
-
-  public void name() {
-   System.out.println("1");
-  }
 
 
     @GetMapping()
