@@ -6,10 +6,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
-import lombok.Data;
 
 @Entity
-@Data
 public class Image {
 
   @Id
@@ -24,9 +22,11 @@ public class Image {
   private String description;
 
   public void setData(byte[] bytes) {
+    this.data = bytes;
   }
 
   public void setDescription(String description2) {
+    this.description = description2;
   }
 
   public Long getId() {

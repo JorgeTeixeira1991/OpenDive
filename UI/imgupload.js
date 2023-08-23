@@ -1,184 +1,81 @@
-document.getElementById("uploadForm").addEventListener("submit", uploadImage);
-document.addEventListener("DOMContentLoaded", (event) => {
-  const savedImages = localStorage.getItem("base64Images");
-  if (savedImages) {
-    populateImages(JSON.parse(savedImages)); // Load from Local Storage
-  }
-});
+// Constants
+const BASE_URL = "http://localhost:8080/api/image";
+const MAX_WIDTH = 800;
 
+// Get saved images from local storage
+const savedImages = localStorage.getItem("base64Images");
+let imgs_loaded_flag = false;
+
+// Toggle images on initial load
+toggleImages(savedImages);
+
+// Add an event listener to the upload form
+document.getElementById("uploadForm").addEventListener("submit", uploadImage);
+
+// Function to handle the image upload
 function uploadImage(event) {
   event.preventDefault();
 
-  let fileInput = document.getElementById("fileInput");
-  let descInput = document.getElementById("desc");
-
+  const fileInput = document.getElementById("fileInput");
+  const descInput = document.getElementById("desc");
   const file = fileInput.files[0];
 
-  // Resize the image first
-  resizeImage(file, function (resizedBlob) {
+  // Resize the image before sending
+  resizeImage(file, (resizedBlob) => {
     const formData = new FormData();
-    formData.append("file", resizedBlob); // Use the resized image blob
+    formData.append("file", resizedBlob);
     formData.append("description", descInput.value);
 
-    fetch("http://localhost:8080/api/image/upload", {
+    // Send the resized image and description to the server
+    fetch(`${BASE_URL}/upload`, {
       method: "POST",
       mode: "no-cors",
       body: formData,
     })
       .then((response) => response.json())
-      .then((data) => {
-        console.log(data);
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
+      .then((data) => console.log(data))
+      .catch((error) => console.error("Error:", error));
   });
 }
 
+// Function to resize an image
 function resizeImage(file, callback) {
   const reader = new FileReader();
 
-  reader.onload = function (event) {
+  reader.onload = (event) => {
     const img = new Image();
-
-    img.onload = function () {
+    img.onload = () => {
       const canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d");
-
-      const MAX_WIDTH = 800;
       const scaleFactor = MAX_WIDTH / img.width;
       canvas.width = MAX_WIDTH;
       canvas.height = img.height * scaleFactor;
-
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-      canvas.toBlob(function (blob) {
-        callback(blob);
-      }, file.type);
+      // Convert the canvas to a blob and pass it to the callback
+      canvas.toBlob((blob) => callback(blob), file.type);
     };
-
     img.src = event.target.result;
   };
 
   reader.readAsDataURL(file);
 }
 
-/*function fetchImage() {
-
-
-    let imageId = document.getElementById('imageId').value;
-
-
-    if (imageId) {
-
-        let imageUrl = `http://localhost:8080/api/image/${imageId}`;
-
-        
-        // Update the src attribute of the img tag
-        document.getElementById('displayImage').src = imageUrl;
-        document.getElementById('displayImage').style.width = '200px';
-        document.getElementById('displayImage').style.height = 'fit-content';
-        document.getElementById('displayImage').style.margin = '10px';
-        document.getElementById('displayImage').style.display = '';
-        
-
-    } else {
-        document.getElementById('displayImage').style.display = 'none';
-    }
-}*/
-
-/*function fetchImages() {
-  const url = "http://localhost:8080/api/image";
-
-  fetch(url)
-    .then((response) => response.json())
-    .then((base64Images) => {
-      const imageContainer = document.getElementById("imageContainer");
-
-      // Clear previous images
-      imageContainer.innerHTML = "";
-      let imageId = 1;
-
-      // Append each image to the container
-      base64Images.forEach((base64Image) => {
-        let img = new Image(); // Create a new image element
-        img.src = "data:image/jpeg;base64," + base64Image;
-        img.style.width = "200px"; // Set width for better visualization, adjust as needed
-        img.style.margin = "10px"; // Add some margin between images
-
-        const linktoimage = document.createElement("a");
-        linktoimage.href = url.concat(`/img/${imageId}`);
-        console.log(imageId);
-        imageId = imageId + 1;
-
-        linktoimage.appendChild(img); // Append the image to the anchor element
-        imageContainer.appendChild(linktoimage); // Append the anchor element (which now contains the image) to the container
-      });
-    })
-    .catch((error) => {
-      console.error("Error fetching images:", error);
-    });
-}*/
-
-function fetchImages() {
-  const url = "http://localhost:8080/api/image";
-
-  fetch(url)
-    .then((response) => response.json())
-    .then((base64Images) => {
-      localStorage.setItem("base64Images", JSON.stringify(base64Images)); // Save to Local Storage
-      populateImages(base64Images);
-    })
-    .catch((error) => {
-      console.error("Error fetching images:", error);
-    });
-}
-
-function populateImages(base64Images) {
-  const imageContainer = document.getElementById("imageContainer");
-
-  // Clear previous images
-  imageContainer.innerHTML = "";
-  let imageId = 1;
-
-  // Append each image to the container
-  base64Images.forEach((base64Image) => {
-    let img = new Image();
-    img.src = "data:image/jpeg;base64," + base64Image;
-    img.style.width = "200px";
-    img.style.margin = "10px";
-
-    const linktoimage = document.createElement("a");
-    linktoimage.href = "http://localhost:8080/api/image".concat(
-      `/img/${imageId}`
-    );
-    console.log(imageId);
-    imageId = imageId + 1;
-
-    linktoimage.appendChild(img);
-    imageContainer.appendChild(linktoimage);
-  });
-}
-
+// Function to fetch a specific image
 function fetchImage() {
   const imageId = document.getElementById("imageId").value;
   const imageContainer = document.getElementById("displayImage");
 
-  fetch(`http://localhost:8080/api/image/${imageId}`)
+  // Fetch the image from the server
+  fetch(`${BASE_URL}/${imageId}`)
     .then((response) => {
-      // Check if the status is 200
-      if (response.status !== 200) {
+      if (response.status !== 200)
         throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-      console.log(` Success! Status: ${response.status}`);
       return response.json();
     })
     .then((base64Image) => {
-      imageContainer.innerHTML = "";
-      const img = document.createElement("img");
-      img.src = "data:image/jpeg;base64," + base64Image;
-      img.style.width = "200px"; // Set width for better visualization, adjust as needed
-      img.style.margin = "10px"; // Add some margin between images
+      // Create and display the image
+      const img = createImageElement(base64Image);
       imageContainer.appendChild(img);
     })
     .catch((error) => {
@@ -187,8 +84,101 @@ function fetchImage() {
     });
 }
 
+// Function to toggle images
+function toggleImages(saved_images) {
+  const toggleButton = document.getElementById("toggleButton");
+  toggleButton.innerHTML = imgs_loaded_flag ? "Unload Images" : "Load Images";
+
+  if (saved_images) {
+    populateImages(JSON.parse(saved_images));
+    imgs_loaded_flag = true;
+    toggleButton.innerHTML = "Unload Images";
+  }
+
+  toggleButton.addEventListener("click", function () {
+    if (imgs_loaded_flag) {
+      unloadImages();
+      imgs_loaded_flag = false;
+      this.innerText = "Load Images";
+    } else {
+      document.getElementById("container").style.transition.height =
+        "0.5s ease;";
+      fetchImages(() => {
+        this.innerText = "Unload Images";
+      });
+      imgs_loaded_flag = true;
+    }
+  });
+}
+
+// Function to clear images
 function unloadImages() {
-  let imageContainer = document.getElementById("imageContainer");
-  imageContainer.innerHTML = ""; // Clear the contents of the container
+  const imageContainer = document.getElementById("imageContainer");
+  imageContainer.innerHTML = "";
   localStorage.removeItem("base64Images");
+}
+
+// Function to fetch all images
+function fetchImages(callback) {
+  fetch(BASE_URL)
+    .then((response) => response.json())
+    .then((base64Images) => {
+      localStorage.setItem("base64Images", JSON.stringify(base64Images));
+      populateImages2(base64Images);
+      if (callback) callback();
+    })
+    .catch((error) => console.error("Error fetching images:", error));
+}
+
+// Function to populate the images
+function populateImages(base64Images) {
+  const imageContainer = document.getElementById("imageContainer");
+  imageContainer.innerHTML = "";
+  let imageId = 1;
+
+  // Create and append each image
+  base64Images.forEach((base64Image) => {
+    setTimeout(() => {
+      const img = createImageElement(base64Image);
+      const linkToImage = document.createElement("a");
+      linkToImage.href = `${BASE_URL}/${imageId}/img`;
+      linkToImage.appendChild(img);
+      imageContainer.appendChild(linkToImage);
+      imageId++;
+    }, 200);
+  });
+}
+
+function populateImages2(base64Images) {
+  const imageContainer = document.getElementById("imageContainer");
+
+  // Clear previous images
+  imageContainer.innerHTML = "";
+  let imageId = 1;
+
+  // Append each image to the container
+  base64Images.forEach((base64Image) => {
+    setTimeout(() => {
+      const img = createImageElement(base64Image);
+      const linktoimage = document.createElement("a");
+      linktoimage.href = "http://localhost:8080/api/image".concat(
+        `/${imageId}/img`
+      );
+      imageId++;
+
+      linktoimage.appendChild(img);
+      imageContainer.appendChild(linktoimage);
+      img.classList.add("fade-in");
+    }, 200);
+    setTimeout(() => {});
+  });
+}
+
+// Function to create an image element
+function createImageElement(base64Image) {
+  const img = new Image();
+  img.src = "data:image/jpeg;base64," + base64Image;
+  img.style.width = "200px";
+  img.style.margin = "10px";
+  return img;
 }

@@ -65,11 +65,16 @@ public class ImageController {
     }
 
     for (Image i : imageList) {
-      String base64Image = "[\"" + Base64.getEncoder().encodeToString(i.getData()) + "\"]";
+      String base64Image = Base64.getEncoder().encodeToString(i.getData());
       base64Images.add(base64Image);
     }
 
     return new ResponseEntity<>(base64Images, HttpStatus.OK);
+  }
+
+  @GetMapping
+  public ResponseEntity<Integer> getId(){
+    
   }
 
   @GetMapping("/img")
@@ -91,7 +96,7 @@ public class ImageController {
     return new ResponseEntity<>(byteImages, headers, HttpStatus.OK);
   }
 
-  @GetMapping("/img/{id}")
+  @GetMapping("/{id}/img")
   public ResponseEntity<byte[]> getImageInByte(@PathVariable Long id) {
     System.out.println(id);
 
